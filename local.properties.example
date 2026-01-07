@@ -1,0 +1,6 @@
+# Add your API keys here
+# Get Gemini API key from: https://makersuite.google.com/app/apikey (Free tier available)
+# Get Google Places API key from: https://console.cloud.google.com/ (Free tier with usage limits)
+
+GEMINI_API_KEY=your_gemini_api_key_here
+PLACES_API_KEY=your_google_places_api_key_here
