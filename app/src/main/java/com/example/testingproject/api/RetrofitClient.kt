@@ -1,5 +1,6 @@
 package com.example.testingproject.api
 
+import com.example.testingproject.BuildConfig
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -9,7 +10,11 @@ import java.util.concurrent.TimeUnit
 object RetrofitClient {
     
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
-        level = HttpLoggingInterceptor.Level.BODY
+        level = if (BuildConfig.DEBUG) {
+            HttpLoggingInterceptor.Level.BODY
+        } else {
+            HttpLoggingInterceptor.Level.NONE
+        }
     }
     
     private val client = OkHttpClient.Builder()

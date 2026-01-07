@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
         val geminiApiKey = BuildConfig.GEMINI_API_KEY
         val placesApiKey = BuildConfig.PLACES_API_KEY
 
-        if (geminiApiKey.isEmpty() || placesApiKey.isEmpty()) {
+        if (!isValidApiKey(geminiApiKey) || !isValidApiKey(placesApiKey)) {
             showApiKeyError()
             return
         }
@@ -48,6 +48,16 @@ class MainActivity : AppCompatActivity() {
             // Process the message
             processUserMessage(message)
         }
+    }
+
+    private fun isValidApiKey(key: String): Boolean {
+        // Google API keys typically start with "AIza" and are 39 characters long
+        // But allow placeholder keys for build testing
+        if (key.isEmpty() || key == "placeholder_key") {
+            return false
+        }
+        // Basic validation - check if it looks like a valid API key format
+        return key.length >= 30 && key.matches(Regex("[A-Za-z0-9_-]+"))
     }
 
     private fun showApiKeyError() {

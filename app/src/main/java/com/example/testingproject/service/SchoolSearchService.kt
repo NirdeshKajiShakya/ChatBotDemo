@@ -91,13 +91,15 @@ class SchoolSearchService(
     
     fun isSchoolSearchQuery(query: String): Boolean {
         val keywords = listOf(
-            "school", "schools", "education", "academy", "college", 
-            "university", "institute", "learning center"
+            "\\bschool\\b", "\\bschools\\b", "\\beducation\\b", "\\bacademy\\b", 
+            "\\bacademies\\b", "\\bcollege\\b", "\\bcolleges\\b",
+            "\\buniversity\\b", "\\buniversities\\b", "\\binstitute\\b", "\\binstitutes\\b", 
+            "\\blearning center\\b", "\\blearning centers\\b"
         )
         val locationKeywords = listOf("near", "in", "around", "at", "close to")
         
         val lowerQuery = query.lowercase()
-        val hasSchoolKeyword = keywords.any { lowerQuery.contains(it) }
+        val hasSchoolKeyword = keywords.any { Regex(it).containsMatchIn(lowerQuery) }
         val hasLocationKeyword = locationKeywords.any { lowerQuery.contains(it) }
         
         return hasSchoolKeyword && hasLocationKeyword
