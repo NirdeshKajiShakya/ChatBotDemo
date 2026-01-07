@@ -2,6 +2,10 @@
 
 An Android chatbot application that helps users find schools near any location using free AI and mapping services.
 
+## ⚠️ Build Requirements
+
+**Note:** This project requires access to Google Maven repositories (`dl.google.com`) to download Android Gradle Plugin and dependencies. If you're in a restricted network environment, you may need to configure a proxy or use a VPN.
+
 ## Features
 
 - 🤖 **AI-Powered Chat**: Uses Google's Gemini AI (free tier) for natural conversation
