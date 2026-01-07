@@ -115,8 +115,7 @@ class MainActivity : AppCompatActivity() {
         
         // Auto-scroll to bottom
         chatBox.post {
-            val scrollView = chatBox.parent as? android.widget.ScrollView
-            scrollView?.fullScroll(android.view.View.FOCUS_DOWN)
+            (chatBox.parent as? android.widget.ScrollView)?.fullScroll(android.view.View.FOCUS_DOWN)
         }
     }
 
@@ -132,8 +131,7 @@ class MainActivity : AppCompatActivity() {
             
             // Auto-scroll to bottom
             chatBox.post {
-                val scrollView = chatBox.parent as? android.widget.ScrollView
-                scrollView?.fullScroll(android.view.View.FOCUS_DOWN)
+                (chatBox.parent as? android.widget.ScrollView)?.fullScroll(android.view.View.FOCUS_DOWN)
             }
         } else {
             appendToChat("Bot: $newMessage")

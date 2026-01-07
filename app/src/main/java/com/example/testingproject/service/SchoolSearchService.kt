@@ -94,7 +94,7 @@ class SchoolSearchService(
             "\\bschool\\b", "\\bschools\\b", "\\beducation\\b", "\\bacademy\\b", 
             "\\bacademies\\b", "\\bcollege\\b", "\\bcolleges\\b",
             "\\buniversity\\b", "\\buniversities\\b", "\\binstitute\\b", "\\binstitutes\\b", 
-            "\\blearning center\\b", "\\blearning centers\\b"
+            "\\blearning\\s+center\\b", "\\blearning\\s+centers\\b"
         )
         val locationKeywords = listOf("near", "in", "around", "at", "close to")
         
