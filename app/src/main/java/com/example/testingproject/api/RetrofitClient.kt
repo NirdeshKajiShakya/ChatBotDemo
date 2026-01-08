@@ -1,45 +1,73 @@
 package com.example.testingproject.api
 
 import com.example.testingproject.BuildConfig
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
-    
+
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
-        level = if (BuildConfig.DEBUG) {
-            HttpLoggingInterceptor.Level.BODY
-        } else {
-            HttpLoggingInterceptor.Level.NONE
+        level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
+    }
+
+    // Interceptor to add the Authorization header for OpenAI
+    class AuthInterceptor(private val apiKey: String) : Interceptor {
+        override fun intercept(chain: Interceptor.Chain): Response {
+            val request = chain.request().newBuilder()
+                .addHeader("Authorization", "Bearer $apiKey")
+                .build()
+            return chain.proceed(request)
         }
     }
-    
-    private val client = OkHttpClient.Builder()
+
+    // We need a separate client for OpenAI to add the auth header
+    private fun createOpenAiClient(apiKey: String): OkHttpClient {
+        return OkHttpClient.Builder()
+            .addInterceptor(AuthInterceptor(apiKey))
+            .addInterceptor(loggingInterceptor)
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .build()
+    }
+
+    // Standard client for non-authenticated APIs
+    private val standardClient = OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)
         .connectTimeout(30, TimeUnit.SECONDS)
         .readTimeout(30, TimeUnit.SECONDS)
         .build()
-    
-    private val geminiRetrofit = Retrofit.Builder()
-        .baseUrl("https://generativelanguage.googleapis.com/")
-        .client(client)
+
+    private val nominatimRetrofit = Retrofit.Builder()
+        .baseUrl("https://nominatim.openstreetmap.org/")
+        .client(standardClient)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
-    
-    private val placesRetrofit = Retrofit.Builder()
-        .baseUrl("https://maps.googleapis.com/")
-        .client(client)
+
+    private val overpassRetrofit = Retrofit.Builder()
+        .baseUrl("https://overpass-api.de/")
+        .client(standardClient)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
-    
-    val geminiApi: GeminiApiService by lazy {
-        geminiRetrofit.create(GeminiApiService::class.java)
+
+    // Function to get a Retrofit instance for Groq (Free AI)
+    fun getGroqRetrofit(apiKey: String): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl("https://api.groq.com/")
+            .client(createOpenAiClient(apiKey))
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
     }
-    
-    val placesApi: GooglePlacesService by lazy {
-        placesRetrofit.create(GooglePlacesService::class.java)
+
+    val nominatimApi: NominatimService by lazy {
+        nominatimRetrofit.create(NominatimService::class.java)
+    }
+
+    val overpassApi: OverpassService by lazy {
+        overpassRetrofit.create(OverpassService::class.java)
     }
 }

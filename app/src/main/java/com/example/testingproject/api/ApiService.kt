@@ -1,31 +1,32 @@
 package com.example.testingproject.api
 
 import retrofit2.http.Body
-import retrofit2.http.GET
 import retrofit2.http.POST
-import retrofit2.http.Query
 
-interface GeminiApiService {
-    @POST("v1beta/models/gemini-pro:generateContent")
-    suspend fun generateContent(
-        @Query("key") apiKey: String,
-        @Body request: GeminiRequest
-    ): GeminiResponse
+// --- Groq Service (Free AI API) ---
+interface GroqService {
+    @POST("openai/v1/chat/completions")
+    suspend fun createChatCompletion(
+        @Body request: GroqRequest
+    ): GroqResponse
 }
 
-interface GooglePlacesService {
-    @GET("maps/api/place/nearbysearch/json")
-    suspend fun searchNearby(
-        @Query("location") location: String,
-        @Query("radius") radius: Int,
-        @Query("type") type: String,
-        @Query("keyword") keyword: String?,
-        @Query("key") apiKey: String
-    ): PlacesSearchResponse
-    
-    @GET("maps/api/geocode/json")
-    suspend fun geocode(
-        @Query("address") address: String,
-        @Query("key") apiKey: String
-    ): GeocodeResponse
-}
+// --- Groq Data Classes ---
+data class GroqRequest(
+    val model: String,
+    val messages: List<GroqMessage>
+)
+
+data class GroqMessage(
+    val role: String,
+    val content: String
+)
+
+data class GroqResponse(
+    val choices: List<GroqChoice>
+)
+
+data class GroqChoice(
+    val message: GroqMessage
+)
+
